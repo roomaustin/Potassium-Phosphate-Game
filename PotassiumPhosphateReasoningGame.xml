@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Game xmlns="urn:reasoning-game:v1"
+      id="RG-K3PO4-001"
+      title="Reasoning Game: Potassium Phosphate"
+      version="1.0">
+
+  <Meta>
+    <Author>0DLCLLC</Author>
+    <CreatedUtc>2026-02-19T00:00:00Z</CreatedUtc>
+    <Description>
+      A lightweight reasoning game about the phrase "potassium phosphate".
+      The player solves by connecting common-name -> chemical formula -> components.
+      Ethical rule: the correct answer is always available via hints and an explicit reveal.
+    </Description>
+    <Ethics>
+      <Rule id="ETH-1">The solution must be obtainable without deception.</Rule>
+      <Rule id="ETH-2">Hints must progressively disclose the answer.</Rule>
+      <Rule id="ETH-3">A direct reveal must exist at all times.</Rule>
+    </Ethics>
+  </Meta>
+
+  <Vocabulary>
+    <Term id="T-POTASSIUM" type="element" symbol="K" name="Potassium" />
+    <Term id="T-PHOSPHATE" type="polyatomic" formula="PO4" name="Phosphate" />
+    <Term id="T-K3PO4" type="compound" formula="K3PO4" name="Potassium Phosphate (common reference)" />
+  </Vocabulary>
+
+  <StateModel>
+    <State id="START" />
+    <State id="STEP-1" />
+    <State id="STEP-2" />
+    <State id="STEP-3" />
+    <State id="SOLVED" />
+    <State id="FAIL_UNSAFE_POSITIVE" />
+  </StateModel>
+
+  <Scoring>
+    <Points correct="+10" incorrect="-2" hintUsed="-1" />
+    <Thresholds solvedAt="20" unsafeAt="-6" />
+  </Scoring>
+
+  <Mechanics>
+    <InputMode>multiple_choice</InputMode>
+    <HintPolicy progressive="true" alwaysAvailable="true" />
+    <RevealPolicy alwaysAvailable="true" />
+    <FailMeaning>
+      FAIL_UNSAFE_POSITIVE = "Residual/unsafe positive in exchange: the system flags a mismatch or risky inference.
+      This is not punishment; it triggers explanation and a safe correction path."
+    </FailMeaning>
+  </Mechanics>
+
+  <Session>
+    <StartState>START</StartState>
+    <OnStart goto="STEP-1" />
+  </Session>
+
+  <Steps>
+
+    <Step id="STEP-1" state="STEP-1">
+      <Prompt>
+        You have the phrase: "potassium phosphate".
+        First, choose the best computer-friendly representation.
+      </Prompt>
+
+      <Choices>
+        <Choice id="C1" correct="true">
+          <Text>Use a chemical formula token: K3PO4</Text>
+          <NextState>STEP-2</NextState>
+        </Choice>
+        <Choice id="C2" correct="false">
+          <Text>Use a Caesar cipher shift token: SHIFT+3</Text>
+          <NextState>FAIL_UNSAFE_POSITIVE</NextState>
+        </Choice>
+        <Choice id="C3" correct="false">
+          <Text>Use a GPS coordinate format</Text>
+          <NextState>FAIL_UNSAFE_POSITIVE</NextState>
+        </Choice>
+      </Choices>
+
+      <Hints>
+        <Hint level="1">This game is about reasoning a chemical name into a formula.</Hint>
+        <Hint level="2">Potassium’s symbol is K; phosphate is PO4; combine them.</Hint>
+        <Hint level="3">For this game, treat “potassium phosphate” as: K3PO4.</Hint>
+      </Hints>
+
+      <Reveal>
+        <Text>Answer: Choose "K3PO4".</Text>
+      </Reveal>
+    </Step>
+
+    <Step id="STEP-2" state="STEP-2">
+      <Prompt>
+        Now decompose the representation into components.
+        Which set matches K3PO4?
+      </Prompt>
+
+      <Choices>
+        <Choice id="C1" correct="true">
+          <Text>3×K and 1×(PO4)</Text>
+          <NextState>STEP-3</NextState>
+        </Choice>
+        <Choice id="C2" correct="false">
+          <Text>1×K and 3×(PO4)</Text>
+          <NextState>FAIL_UNSAFE_POSITIVE</NextState>
+        </Choice>
+        <Choice id="C3" correct="false">
+          <Text>3×P and 4×O and 1×K</Text>
+          <NextState>FAIL_UNSAFE_POSITIVE</NextState>
+        </Choice>
+      </Choices>
+
+      <Hints>
+        <Hint level="1">Read subscripts: K3 means three potassium.</Hint>
+        <Hint level="2">PO4 is a grouped unit (phosphate), treat it as one component group here.</Hint>
+        <Hint level="3">Correct decomposition: 3 potassium + one phosphate group.</Hint>
+      </Hints>
+
+      <Reveal>
+        <Text>Answer: 3×K and 1×(PO4).</Text>
+      </Reveal>
+    </Step>
+
+    <Step id="STEP-3" state="STEP-3">
+      <Prompt>
+        Final reasoning check:
+        What is the explicit solution that the game must ethically disclose?
+      </Prompt>
+
+      <Choices>
+        <Choice id="C1" correct="true">
+          <Text>“potassium phosphate” → K3PO4 → components: 3×K + 1×(PO4)</Text>
+          <NextState>SOLVED</NextState>
+        </Choice>
+        <Choice id="C2" correct="false">
+          <Text>“potassium phosphate” → srwdvvlxp skrvskdwh (Caesar +3)</Text>
+          <NextState>FAIL_UNSAFE_POSITIVE</NextState>
+        </Choice>
+      </Choices>
+
+      <Hints>
+        <Hint level="1">State the mapping (name → formula → parts) in one line.</Hint>
+        <Hint level="2">Include both the formula and the component counts.</Hint>
+        <Hint level="3">Exact: potassium phosphate → K3PO4 → 3K + PO4.</Hint>
+      </Hints>
+
+      <Reveal>
+        <Text>
+          Solution (ethically disclosed):
+          potassium phosphate → K3PO4 → 3×K + 1×(PO4).
+        </Text>
+      </Reveal>
+    </Step>
+
+  </Steps>
+
+  <FailureHandlers>
+    <Failure id="FAIL_UNSAFE_POSITIVE" state="FAIL_UNSAFE_POSITIVE">
+      <Message>
+        Unsafe positive / residual triggered:
+        The selection doesn’t match the chemical reasoning path.
+        The system will disclose the safe correction below.
+      </Message>
+      <SafeCorrection>
+        <Text>
+          Correction path:
+          1) Represent “potassium phosphate” as K3PO4 (for this game).
+          2) Decompose as 3×K + 1×(PO4).
+        </Text>
+      </SafeCorrection>
+      <NextState>STEP-1</NextState>
+    </Failure>
+  </FailureHandlers>
+
+  <SolvedState id="SOLVED">
+    <Message>✅ Solved. You matched the phrase to its formula and components.</Message>
+    <FinalReveal>
+      <Text>potassium phosphate → K3PO4 → 3×K + (PO4)</Text>
+    </FinalReveal>
+  </SolvedState>
+
+</Game>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ComputationGame xmlns="urn:reasoning-compute:v1"
+                 id="CG-K3PO4-001"
+                 title="Computational Game: Potassium Phosphate"
+                 version="1.0">
+
+  <Meta>
+    <Author>0DLCLLC</Author>
+    <CreatedUtc>2026-02-19T00:00:00Z</CreatedUtc>
+    <Mode>Deterministic Evaluation</Mode>
+    <Description>
+      A machine-readable reasoning game that evaluates chemical computation steps.
+      Input: "potassium phosphate"
+      Output: validated computational structure and component counts.
+    </Description>
+  </Meta>
+
+  <!-- Step 1: Normalize Input -->
+  <Normalization>
+    <Rule id="N1">
+      <Match>potassium phosphate</Match>
+      <Output>K3PO4</Output>
+    </Rule>
+  </Normalization>
+
+  <!-- Step 2: Parse Formula -->
+  <Parser>
+    <Element symbol="K" count="3"/>
+    <Group formula="PO4" count="1">
+      <Element symbol="P" count="1"/>
+      <Element symbol="O" count="4"/>
+    </Group>
+  </Parser>
+
+  <!-- Step 3: Computation Logic -->
+  <Computation>
+    <AtomicCounts>
+      <Atom symbol="K" total="3"/>
+      <Atom symbol="P" total="1"/>
+      <Atom symbol="O" total="4"/>
+    </AtomicCounts>
+
+    <ChargeModel>
+      <Ion symbol="K" charge="+1" quantity="3"/>
+      <Ion symbol="PO4" charge="-3" quantity="1"/>
+      <NetCharge>0</NetCharge>
+    </ChargeModel>
+
+    <Validation>
+      <Rule id="V1" description="Charge must equal zero">
+        <Check>NetCharge == 0</Check>
+        <Result>true</Result>
+      </Rule>
+      <Rule id="V2" description="Atom totals must match formula structure">
+        <Check>K=3 AND P=1 AND O=4</Check>
+        <Result>true</Result>
+      </Rule>
+    </Validation>
+  </Computation>
+
+  <!-- Game States -->
+  <States>
+    <State id="INPUT_RECEIVED"/>
+    <State id="NORMALIZED"/>
+    <State id="PARSED"/>
+    <State id="COMPUTED"/>
+    <State id="VALID"/>
+    <State id="INVALID"/>
+  </States>
+
+  <!-- Execution Flow -->
+  <Execution>
+    <Transition from="INPUT_RECEIVED" to="NORMALIZED"/>
+    <Transition from="NORMALIZED" to="PARSED"/>
+    <Transition from="PARSED" to="COMPUTED"/>
+    <Transition from="COMPUTED" to="VALID"/>
+  </Execution>
+
+  <!-- Ethical Disclosure -->
+  <Ethics>
+    <Reveal>
+      potassium phosphate → K3PO4
+      Atomic totals: K=3, P=1, O=4
+      Net Charge = 0
+    </Reveal>
+  </Ethics>
+
+</ComputationGame>
